@@ -3,6 +3,7 @@
 #include "Motor.h"
 #include "Input.h"
 #include "Encoder.h"
+#include "Arduino.h"
 
 Controller::Controller() :
     encoder(&Encoder::Get()),
@@ -29,7 +30,8 @@ Controller::Controller() :
     
     input = new Input();
     motor = new Motor(11,12,13,1);
-
+   
+    motor->SwitchDirection();
     motor->FindRestPos();
 }
 
@@ -46,7 +48,7 @@ void Controller::Update(unsigned dTime)
     if(fastUpdateTimer >= fastUpdateDelay)
     {
         // Serial.println("fastUpdate!");
-        motor->Update(fastUpdateDelay, (double)sps* GetSpeedFactor()* 8);
+        motor->Update(fastUpdateDelay, (double)sps* GetSpeedFactor());
         fastUpdateTimer -= fastUpdateDelay;
     }
     constexpr double slowUpdateDelay = 50;

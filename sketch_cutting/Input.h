@@ -1,4 +1,5 @@
-﻿#pragma once
+#pragma once
+
 enum Button{
     RIGHT,
     UP,

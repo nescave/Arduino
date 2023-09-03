@@ -1,4 +1,5 @@
-﻿#include "Input.h"
+#include "Input.h"
+#include "Arduino.h"
 
 Input::Input() :
     lastButton(NONE),

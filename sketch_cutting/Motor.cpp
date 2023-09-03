@@ -1,4 +1,4 @@
-﻿#include "Motor.h"
+#include "Motor.h"
 #include <Arduino.h>
 
 void Motor::SetPullHigh()

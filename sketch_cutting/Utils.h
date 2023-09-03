@@ -1,6 +1,5 @@
 #pragma once
 #include <Arduino.h>
-// #include "C:\Users\Nesca\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.h"
 
 class Screen
 {

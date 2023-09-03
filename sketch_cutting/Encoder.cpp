@@ -1,4 +1,4 @@
-﻿#include "Encoder.h"
+#include "Encoder.h"
 #include <Arduino.h>
 
 bool Encoder::Init(const int pinRight, const int pinLeft) 

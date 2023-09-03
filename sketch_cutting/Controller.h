@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\Users\Nesca\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.h"
+#include <LiquidCrystal.h>
 
 class Encoder;
 class Input;
