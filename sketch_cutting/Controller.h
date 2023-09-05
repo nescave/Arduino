@@ -30,7 +30,6 @@ class Controller
     float pulsesCounter;
     unsigned sps;
     bool enabled;
-    int cutNum;
     
     float GetDistancePerStep() const;
 

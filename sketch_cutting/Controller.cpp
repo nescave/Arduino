@@ -13,14 +13,13 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     superSlowUpdateTimer(0),
-    values{330, 88.25, 2.5f},
+    values{330, 88.25, 0, 2.5f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:", "ilosc szt", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
     sps(0),
-    enabled(true),
-    cutNum(0)
+    enabled(true)
 {
     encoder->Init(2,3);
     Serial.begin(9600);
@@ -115,7 +114,7 @@ void Controller::AdjustActiveValueBy(float val) const
     case 1:
         val*=0.05;
         break;
-    case 2:
+    case 3:
         val*=0.1;
         break;
     default:
@@ -160,7 +159,7 @@ void Controller::StartCutting()
 {
     motor->cutting = true;
     motor->searching = false;
-    cutNum++;
+    values[2]++;
     motor->RotationsWithSpeed(0.28);
 }
 
