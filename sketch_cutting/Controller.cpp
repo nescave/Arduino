@@ -19,7 +19,8 @@ Controller::Controller() :
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
     sps(0),
-    enabled(true)
+    enabled(true),
+    numPieces(0)
 {
     encoder->Init(2,3);
     Serial.begin(9600);
@@ -102,7 +103,7 @@ float Controller::GetDistancePerStep() const
 void Controller::ToggleValues()
 {
     ++valueSelector;
-    if(valueSelector>3) valueSelector=0;
+    if(valueSelector>2) valueSelector=0;
     activeName = &names[valueSelector];
     activeValue = &values[valueSelector];
 }
@@ -142,7 +143,7 @@ float Controller::GetDiameter() const
 
 float Controller::GetSpeedFactor() const
 {
-    return values[3];
+    return values[2];
 }
 
 unsigned Controller::GetSpm(unsigned pulses, unsigned milisecs) const
