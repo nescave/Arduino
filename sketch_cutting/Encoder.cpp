@@ -48,7 +48,6 @@ unsigned Encoder::GetPositivePulses()
     const auto ret = pulsesA;
     pulsesA = pulsesB = 0;
     return ret;
-
 }
 
 int Encoder::GetPulsesSum()

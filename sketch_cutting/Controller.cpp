@@ -13,9 +13,9 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     superSlowUpdateTimer(0),
-    values{330, 88.25, 0, 2.5f},
+    values{330, 88.25, 2.5f},
     distanceTraveled(0),
-    names{"Dlug wezy:","Srednica:", "ilosc szt", "speed fac:"},
+    names{"Dlug wezy:","Srednica:", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
     sps(0),
@@ -59,7 +59,7 @@ void Controller::Update(unsigned dTime)
         if(input->WasBtnPressed(RIGHT)) AdjustActiveValueBy(1);
         if(input->IsBtnHeld(LEFT)) AdjustActiveValueBy(-1);
         if(input->IsBtnHeld(RIGHT)) AdjustActiveValueBy(1);
-        if(input->WasBtnPressed(DOWN)) motor->RotationsInTime(1, 2000);
+        if(input->WasBtnPressed(DOWN)) ResetPieces();
         if(input->WasBtnPressed(UP)) StartCutting();
 
         const auto pulses = encoder->GetPositivePulses();
@@ -115,9 +115,6 @@ void Controller::AdjustActiveValueBy(float val) const
         val*=0.05;
         break;
     case 2:
-        val*=0;
-        break;
-    case 3:
         val*=0.1;
         break;
     default:
@@ -143,11 +140,6 @@ float Controller::GetDiameter() const
     return values[1];
 }
 
-float Controller::GetNumberPieces() const
-{
-    return values[2];
-}
-
 float Controller::GetSpeedFactor() const
 {
     return values[3];
@@ -158,11 +150,16 @@ unsigned Controller::GetSpm(unsigned pulses, unsigned milisecs) const
     return unsigned((float)pulses/(float)milisecs);
 }
 
+void Controller::ResetPieces()
+{
+    numPieces = 0;
+}
+
 void Controller::StartCutting()
 {
     motor->cutting = true;
     motor->searching = false;
-    values[2]++;
+    numPieces++;
     motor->RotationsWithSpeed(0.28);
 }
 
@@ -183,10 +180,10 @@ void Controller::ScreenDraw()
     lcd.print(*activeName);
     lcd.setCursor(11, 0);
     lcd.print(*activeValue);
-    // lcd.setCursor(0, 1);
+    lcd.setCursor(0, 1);
     // lcd.print(sps);
     // lcd.print(motor->stepDelay);
-    // lcd.print("ilosc szt");
-    lcd.setCursor(8, 1);
-    lcd.print(distanceTraveled);
+    lcd.print("szt:");
+    lcd.setCursor(6, 1);
+    lcd.print(numPieces);
 }
