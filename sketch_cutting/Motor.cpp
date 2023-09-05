@@ -76,7 +76,7 @@ void Motor::ComeBackInTime(double milisecs)
 {
     searching = true;
     // RotationsInTime(0.72, 0.72*stepsPerRev*GetLowestDelay()/1000);
-    RotationsInTime(0.72, milisecs);
+    RotationsInTime(.85, milisecs);
 }
 
 bool Motor::RotationsInTime(float rotations, double milisecs)
