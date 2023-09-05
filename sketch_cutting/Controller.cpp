@@ -15,11 +15,12 @@ Controller::Controller() :
     superSlowUpdateTimer(0),
     values{330, 88.25, 2.5f},
     distanceTraveled(0),
-    names{"Dlug wezy:","Srednica:", "speed fac:"},
+    names{"Dlug wezy:","Srednica:", "ilosc szt", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
     sps(0),
-    enabled(true)
+    enabled(true),
+    cutNum(0)
 {
     encoder->Init(2,3);
     Serial.begin(9600);
@@ -102,7 +103,7 @@ float Controller::GetDistancePerStep() const
 void Controller::ToggleValues()
 {
     ++valueSelector;
-    if(valueSelector>2) valueSelector=0;
+    if(valueSelector>3) valueSelector=0;
     activeName = &names[valueSelector];
     activeValue = &values[valueSelector];
 }
@@ -140,9 +141,14 @@ float Controller::GetDiameter() const
     return values[1];
 }
 
-float Controller::GetSpeedFactor() const
+float Controller::GetNumberPieces() const
 {
     return values[2];
+}
+
+float Controller::GetSpeedFactor() const
+{
+    return values[3];
 }
 
 unsigned Controller::GetSpm(unsigned pulses, unsigned milisecs) const
@@ -154,6 +160,7 @@ void Controller::StartCutting()
 {
     motor->cutting = true;
     motor->searching = false;
+    cutNum++;
     motor->RotationsWithSpeed(0.28);
 }
 
@@ -174,9 +181,10 @@ void Controller::ScreenDraw()
     lcd.print(*activeName);
     lcd.setCursor(11, 0);
     lcd.print(*activeValue);
-    lcd.setCursor(0, 1);
+    // lcd.setCursor(0, 1);
     // lcd.print(sps);
-    lcd.print(motor->stepDelay);
+    // lcd.print(motor->stepDelay);
+    // lcd.print("ilosc szt");
     lcd.setCursor(8, 1);
     lcd.print(distanceTraveled);
 }
