@@ -21,9 +21,9 @@ class Motor
     bool powerOff;
 
     bool useSpeed;
-    bool searching;
     bool isPulling;
 public:
+    bool searching;
     Motor(int pinMotorPull, int pinMotorDirection, int pinMotorDisabler, int pinMotorRestPosition);
     unsigned stepsPerRev;
     double stepDelay;
@@ -38,7 +38,7 @@ public:
     void SetPower(bool isOff){powerOff = isOff;}
 
     void FindRestPos();
-    void ComeBackInTime(double milisecs = 200);
+    void ComeBackInTime(double milisecs = 4000);
     bool RotationsInTime(float rotations, double milisecs);
     bool RotationsWithSpeed(float rotations);
     double EnsureCorrectDelay(double delay) const;

@@ -59,11 +59,11 @@ void Controller::Update(unsigned dTime)
         if(input->WasBtnPressed(RIGHT)) AdjustActiveValueBy(1);
         if(input->IsBtnHeld(LEFT)) AdjustActiveValueBy(-1);
         if(input->IsBtnHeld(RIGHT)) AdjustActiveValueBy(1);
-        if(input->WasBtnPressed(DOWN)) motor->RotationsInTime(1, 1000*GetSpeedFactor());
+        if(input->WasBtnPressed(DOWN)) motor->RotationsInTime(1, 2000);
         if(input->WasBtnPressed(UP)) StartCutting();
 
-        // const auto pulses = encoder->GetPositivePulses();
-        const auto pulses = 1.5f;
+        const auto pulses = encoder->GetPositivePulses();
+        // const auto pulses = 1.5f;
         if(enabled)
         {
             pulsesCounter += pulses;
@@ -153,6 +153,7 @@ unsigned Controller::GetSpm(unsigned pulses, unsigned milisecs) const
 void Controller::StartCutting()
 {
     motor->cutting = true;
+    motor->searching = false;
     motor->RotationsWithSpeed(0.28);
 }
 

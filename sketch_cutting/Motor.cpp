@@ -36,7 +36,7 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     isPulling(true),
     stepDelay(300),
     stepTimer(0),
-    wheelRatio(68.0/11),
+    wheelRatio(55.0/27.5),
     stepsPerRev(round(400*wheelRatio)),
     stepsDone(0),
     stepsToMake(0),
@@ -75,8 +75,8 @@ void Motor::FindRestPos()
 void Motor::ComeBackInTime(double milisecs)
 {
     searching = true;
-    RotationsInTime(0.72, 0.72*stepsPerRev*GetLowestDelay()/1000);
-    // RotationsInTime(0.72, milisecs);
+    // RotationsInTime(0.72, 0.72*stepsPerRev*GetLowestDelay()/1000);
+    RotationsInTime(0.72, milisecs);
 }
 
 bool Motor::RotationsInTime(float rotations, double milisecs)
@@ -114,12 +114,12 @@ void Motor::CleanupAfterStep()
         ComeBackInTime();
     }
     useSpeed = false;
-    searching = false;
+    // searching = false;
 }
 
 void Motor::Update(unsigned dTime, double sps)
 {
-    localSps = sps;
+    localSps = max(sps, 1);
     digitalWrite(pinDisabler, powerOff);
     const double delay = GetDelay()/2;
     for(;stepTimer >= delay; stepTimer -= (unsigned)delay){
