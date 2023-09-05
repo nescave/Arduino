@@ -114,6 +114,9 @@ void Controller::AdjustActiveValueBy(float val) const
     case 1:
         val*=0.05;
         break;
+    case 2:
+        val*=0;
+        break;
     case 3:
         val*=0.1;
         break;
