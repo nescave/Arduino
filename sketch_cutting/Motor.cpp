@@ -36,7 +36,7 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     isPulling(true),
     stepDelay(300),
     stepTimer(0),
-    wheelRatio(55.0/27.5),
+    wheelRatio(2.0/1.0),
     stepsPerRev(round(400*wheelRatio)),
     stepsDone(0),
     stepsToMake(0),

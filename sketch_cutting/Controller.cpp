@@ -13,7 +13,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     superSlowUpdateTimer(0),
-    values{330, 88.25, 2.5f},
+    values{410, 88.2, 3.5f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
