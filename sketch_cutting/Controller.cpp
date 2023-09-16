@@ -13,7 +13,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     superSlowUpdateTimer(0),
-    values{410, 88.2, 3.5f},
+    values{335, 88.2, 3.5f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -61,33 +61,34 @@ void Controller::Update(unsigned dTime)
         if(input->IsBtnHeld(LEFT)) AdjustActiveValueBy(-1);
         if(input->IsBtnHeld(RIGHT)) AdjustActiveValueBy(1);
         if(input->WasBtnPressed(DOWN)) ResetPieces();
-        if(input->WasBtnPressed(UP)) StartCutting();
+        if(input->WasBtnPressed(UP)) distanceTraveled = 0;
 
-        const auto pulses = encoder->GetPositivePulses();
-        // const auto pulses = 1.5f;
+        const auto pulses = encoder->GetPulsesSum();
+        // const auto pulses = 2;
         if(enabled)
         {
             pulsesCounter += pulses;
             distanceTraveled +=  GetDistancePerStep() * (float)pulses;
         }
-        if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
-        {
-            StartCutting();
-            distanceTraveled -= GetMaterialLen();
-        }
+        // if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
+        // {
+        //     StartCutting();
+        //     distanceTraveled -= GetMaterialLen();
+        // }
         
         ScreenDraw();
         input->Update(slowUpdateDelay);
         // encoder->Update(slowUpdateDelay);
         slowUpdateTimer-=slowUpdateDelay;
+        encoder->ResetPulses();
     }
 
     constexpr double superSlowUpdateDelay = 0.25;
     if(superSlowUpdateTimer >= superSlowUpdateDelay)
     {
 
-        sps = unsigned((float)pulsesCounter/superSlowUpdateDelay);
-        // sps = 75;
+        sps_test = sps = unsigned((float)pulsesCounter/superSlowUpdateDelay);
+        // sps = 40;
         pulsesCounter = 0;
         superSlowUpdateTimer -= superSlowUpdateDelay;
     }
@@ -161,7 +162,7 @@ void Controller::StartCutting()
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.28);
+    motor->RotationsWithSpeed(0.5);
 }
 
 void Controller::ToggleEnable()
@@ -184,7 +185,11 @@ void Controller::ScreenDraw()
     lcd.setCursor(0, 1);
     // lcd.print(sps);
     // lcd.print(motor->stepDelay);
-    lcd.print("szt:");
-    lcd.setCursor(6, 1);
-    lcd.print(numPieces);
+    //lcd.print("szt:");
+    lcd.print("droga:");
+    
+    lcd.setCursor(7, 1);
+    lcd.print(distanceTraveled);
+
+    //lcd.print(numPieces);
 }

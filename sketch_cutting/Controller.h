@@ -29,6 +29,7 @@ class Controller
 
     float pulsesCounter;
     unsigned sps;
+    unsigned sps_test;
     bool enabled;
     int numPieces;
     

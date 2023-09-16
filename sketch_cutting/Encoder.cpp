@@ -46,13 +46,15 @@ Encoder& Encoder::Get()
 unsigned Encoder::GetPositivePulses()
 {
     const auto ret = pulsesA;
-    pulsesA = pulsesB = 0;
     return ret;
 }
 
 int Encoder::GetPulsesSum()
 {
     const auto ret = (int)pulsesA - (int)pulsesB;
-    pulsesA = pulsesB = 0;
     return ret;
+}
+void Encoder::ResetPulses()
+{
+    pulsesA = pulsesB = 0;
 }

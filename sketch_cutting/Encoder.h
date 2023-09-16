@@ -10,11 +10,13 @@ class Encoder
     
 public:
     bool Init(const int pinRight, const int pinLeft);
+
     static void OnPulseA();
     static void OnPulseB();
     static Encoder& Get();
     static unsigned GetPositivePulses();
     static int GetPulsesSum(); 
+    static void ResetPulses();
 
     static void Update(unsigned dTime); //TODO encoder's update must resolve last
 };
