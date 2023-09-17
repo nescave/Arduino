@@ -65,7 +65,9 @@ void Controller::Update(unsigned dTime, int encSteps)
         if(enabled)
         {
             pulsesCounter += pulses;
-            distanceTraveled +=  GetDistancePerStep() * (float)pulses;
+            // distanceTraveled +=  GetDistancePerStep() * (float)pulses;
+            distanceTraveled += pulses;
+        
         }
         // if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
         // {
