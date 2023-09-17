@@ -4,9 +4,9 @@ class Encoder
 {
     static int pinA;
     static  int pinB;
-    volatile static unsigned pulsesA;
-    volatile static unsigned pulsesB;
-    volatile static unsigned long lastTime;
+    static volatile unsigned pulsesA;
+    static volatile unsigned pulsesB;
+    static volatile unsigned long lastTime;
     Encoder() = default;
     
 public:

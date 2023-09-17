@@ -1,6 +1,13 @@
 #include "Encoder.h"
 #include <Arduino.h>
 
+int Encoder::pinA = 0;
+int Encoder::pinB = 0;
+volatile unsigned Encoder::pulsesA = 0;
+volatile unsigned Encoder::pulsesB = 0;
+volatile unsigned long Encoder::lastTime = 0;
+
+
 void Encoder::Init(const int pinRight, const int pinLeft) 
 {
     pinA = pinRight;
@@ -26,11 +33,13 @@ void Encoder::OnPulseA()
     }
     if(digitalRead(pinB) == HIGH){
         ++pulsesB;
+        
     }
     else
     {
         ++pulsesA;
     }
+    lastTime = millis();
 }
 
 void Encoder::OnPulseB()
