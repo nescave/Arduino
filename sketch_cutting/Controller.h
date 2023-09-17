@@ -51,5 +51,5 @@ public:
     Controller();
     ~Controller();
 
-    void Update(unsigned dTime, int encSteps);
+    void Update(unsigned dTime, int* encSteps);
 };

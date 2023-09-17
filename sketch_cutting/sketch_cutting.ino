@@ -3,9 +3,8 @@
 
 #define  A_PHASE 2
 #define  B_PHASE 3
-int encSteps = 0;  //Assign a value to the token bit
-int flagB = 0;  //Assign a value to the token bit
-
+int encSteps = 0;  
+int encSteps2 = 0;
 Controller* controller;
 
 unsigned long lastTime;
@@ -13,8 +12,12 @@ void setup()
 {
     pinMode(A_PHASE, INPUT_PULLUP);
     pinMode(B_PHASE, INPUT_PULLUP);
+
+    digitalWrite(A_PHASE, HIGH);
+    digitalWrite(B_PHASE, HIGH);
+
     Serial.begin(9600);   //Serial Port Baudrate: 9600
-    attachInterrupt(digitalPinToInterrupt( A_PHASE), interrupt, FALLING); //Interrupt trigger mode: RISING
+    attachInterrupt(digitalPinToInterrupt(A_PHASE), interrupt, FALLING); //Interrupt trigger mode: RISING
     
     controller = new Controller();
     lastTime = micros();
@@ -24,27 +27,27 @@ void loop()
 {
     // delayMicroseconds(5);
     const unsigned long currTime = micros();
-    const unsigned dTime = currTime - lastTime; 
-    if(dTime>500)
+    if(lastTime - currTime > 300)
     {
-        Serial.println(dTime);
-    }else
-    {
+        const unsigned dTime = currTime - lastTime; 
+        Serial.print("steps:  ");
+        Serial.println(encSteps2);
         
-        Serial.print("CCW:  ");
-        Serial.println(encSteps);
-        
-        controller->Update(dTime, encSteps);
-        encSteps = 0;
+        controller->Update(dTime, &encSteps);
     }
     lastTime = currTime;
 }
 
-void interrupt()// Interrupt function
+void interrupt()
 {
     int i = digitalRead( B_PHASE);
     if (i == 0)
+    {
+        encSteps -= 1;
+        encSteps2 -= 1;
+    }
+    else{
         encSteps += 1;
-    else
-        flagB -= 1;
+        encSteps2 += 1;
+    }
 }

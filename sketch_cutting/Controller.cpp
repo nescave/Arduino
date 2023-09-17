@@ -12,7 +12,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     superSlowUpdateTimer(0),
-    values{335, 88.2, 3.5f},
+    values{335, 89.67, 3.0f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -40,12 +40,11 @@ Controller::~Controller()
     delete motor;
 }
 
-void Controller::Update(unsigned dTime, int encSteps)
+void Controller::Update(unsigned dTime, int* encSteps)
 {
     constexpr unsigned fastUpdateDelay = 500;
     if(fastUpdateTimer >= fastUpdateDelay)
     {
-        // Serial.println("fastUpdate!");
         motor->Update(fastUpdateDelay, (double)sps* GetSpeedFactor());
         fastUpdateTimer -= fastUpdateDelay;
     }
@@ -57,17 +56,18 @@ void Controller::Update(unsigned dTime, int encSteps)
         if(input->WasBtnPressed(RIGHT)) AdjustActiveValueBy(1);
         if(input->IsBtnHeld(LEFT)) AdjustActiveValueBy(-1);
         if(input->IsBtnHeld(RIGHT)) AdjustActiveValueBy(1);
-        if(input->WasBtnPressed(DOWN)) ResetPieces();
+        if(input->WasBtnPressed(DOWN)) distanceTraveled = 0;
         if(input->WasBtnPressed(UP)) distanceTraveled = 0;
 
-        const auto pulses = encSteps;
+        const auto pulses = *encSteps;
+        *encSteps = 0;        
         // const auto pulses = 2;
         if(enabled)
         {
             pulsesCounter += pulses;
-            // distanceTraveled +=  GetDistancePerStep() * (float)pulses;
             distanceTraveled += pulses;
-        
+
+            // distanceTraveled +=  GetDistancePerStep() * (float)pulses;
         }
         // if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
         // {
@@ -79,7 +79,6 @@ void Controller::Update(unsigned dTime, int encSteps)
         input->Update(slowUpdateDelay);
         // encoder->Update(slowUpdateDelay);
         slowUpdateTimer-=slowUpdateDelay;
-        // encoder->ResetPulses();
     }
 
     constexpr double superSlowUpdateDelay = 0.25;
