@@ -31,7 +31,7 @@ Controller::Controller() :
     motor = new Motor(11,12,13,1);
    
     motor->SwitchDirection();
-    motor->FindRestPos();
+    // motor->FindRestPos();
 }
 
 Controller::~Controller()
@@ -65,15 +65,15 @@ void Controller::Update(unsigned dTime, int* encSteps)
         if(enabled)
         {
             pulsesCounter += pulses;
-            distanceTraveled += pulses;
+            // distanceTraveled += pulses;
 
-            // distanceTraveled +=  GetDistancePerStep() * (float)pulses;
+            distanceTraveled +=  GetDistancePerStep() * (float)pulses;
         }
-        // if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
-        // {
-        //     StartCutting();
-        //     distanceTraveled -= GetMaterialLen();
-        // }
+        if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
+        {
+            StartCutting();
+            distanceTraveled -= GetMaterialLen();
+        }
         
         ScreenDraw();
         input->Update(slowUpdateDelay);
@@ -86,7 +86,7 @@ void Controller::Update(unsigned dTime, int* encSteps)
     {
 
         sps_test = sps = unsigned((float)pulsesCounter/superSlowUpdateDelay);
-        // sps = 40;
+        sps = 40;
         pulsesCounter = 0;
         superSlowUpdateTimer -= superSlowUpdateDelay;
     }

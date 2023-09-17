@@ -23,18 +23,26 @@ void setup()
     lastTime = micros();
 }
 unsigned updateTimer = 0;
+unsigned dTime = 0;
 void loop()
 {
     // delayMicroseconds(5);
     const unsigned long currTime = micros();
-    if(lastTime - currTime > 300)
+        // Serial.print("steps:  ");
+    dTime += currTime - lastTime; 
+    
+    if(dTime>200)
     {
-        const unsigned dTime = currTime - lastTime; 
-        Serial.print("steps:  ");
-        Serial.println(encSteps2);
-        
         controller->Update(dTime, &encSteps);
+        dTime=0;
     }
+    // {
+        // Serial.println(dTime);
+    // }else
+    // {
+        // Serial.println("update");
+    // }
+    // }
     lastTime = currTime;
 }
 
