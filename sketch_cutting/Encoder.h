@@ -6,7 +6,6 @@ class Encoder
     static  int pinB;
     static volatile unsigned pulsesA;
     static volatile unsigned pulsesB;
-    static volatile unsigned long lastTime;
     Encoder() = default;
     
 public:

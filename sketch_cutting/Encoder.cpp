@@ -5,8 +5,6 @@ int Encoder::pinA = 0;
 int Encoder::pinB = 0;
 volatile unsigned Encoder::pulsesA = 0;
 volatile unsigned Encoder::pulsesB = 0;
-volatile unsigned long Encoder::lastTime = 0;
-
 
 void Encoder::Init(const int pinRight, const int pinLeft) 
 {
@@ -15,31 +13,24 @@ void Encoder::Init(const int pinRight, const int pinLeft)
 
     pulsesA = 0;
     pulsesB = 0;
-    lastTime = millis();
     
-    pinMode(pinA, INPUT);
-    pinMode(pinB, INPUT);
+    pinMode(pinA, INPUT_PULLUP);
+    pinMode(pinB, INPUT_PULLUP);
     // digitalWrite(pinA, HIGH);
     // digitalWrite(pinB, HIGH);
 
-    attachInterrupt(digitalPinToInterrupt(2), [](){Encoder::Get().OnPulseA();}, RISING);
+    attachInterrupt(digitalPinToInterrupt(2), [](){Encoder::Get().OnPulseA();}, FALLING);
 }
 
 void Encoder::OnPulseA()
 {
-    if(millis() - lastTime < 10)
-    {
-        return;
-    }
-    if(digitalRead(pinB) == HIGH){
+    if(digitalRead(pinB) == LOW){
         ++pulsesB;
-        
     }
     else
     {
         ++pulsesA;
     }
-    lastTime = millis();
 }
 
 void Encoder::OnPulseB()
