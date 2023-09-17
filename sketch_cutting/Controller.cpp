@@ -6,7 +6,6 @@
 #include "Arduino.h"
 
 Controller::Controller() :
-    encoder(&Encoder::Get()),
     activeName(nullptr),
     activeValue(nullptr),
     valueSelector(0),
@@ -22,7 +21,6 @@ Controller::Controller() :
     enabled(true),
     numPieces(0)
 {
-    encoder->Init(2,3);
     Serial.begin(9600);
     lcd.begin(16, 2);
     
@@ -38,12 +36,11 @@ Controller::Controller() :
 
 Controller::~Controller()
 {
-    delete encoder;
     delete input;
     delete motor;
 }
 
-void Controller::Update(unsigned dTime)
+void Controller::Update(unsigned dTime, int encSteps)
 {
     constexpr unsigned fastUpdateDelay = 500;
     if(fastUpdateTimer >= fastUpdateDelay)
@@ -63,7 +60,7 @@ void Controller::Update(unsigned dTime)
         if(input->WasBtnPressed(DOWN)) ResetPieces();
         if(input->WasBtnPressed(UP)) distanceTraveled = 0;
 
-        const auto pulses = encoder->GetPulsesSum();
+        const auto pulses = encSteps;
         // const auto pulses = 2;
         if(enabled)
         {
@@ -80,7 +77,7 @@ void Controller::Update(unsigned dTime)
         input->Update(slowUpdateDelay);
         // encoder->Update(slowUpdateDelay);
         slowUpdateTimer-=slowUpdateDelay;
-        encoder->ResetPulses();
+        // encoder->ResetPulses();
     }
 
     constexpr double superSlowUpdateDelay = 0.25;

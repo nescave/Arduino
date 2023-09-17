@@ -7,7 +7,7 @@ class Motor;
 
 class Controller
 {
-    Encoder* encoder;
+    // Encoder* encoder;
     Input* input;
     Motor* motor;
     LiquidCrystal lcd;
@@ -47,8 +47,9 @@ class Controller
     void ToggleEnable();
     void ScreenDraw();
 public:
+    
     Controller();
     ~Controller();
 
-    void Update(unsigned dTime);
+    void Update(unsigned dTime, int encSteps);
 };
