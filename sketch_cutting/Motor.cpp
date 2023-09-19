@@ -31,12 +31,13 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     pinDisabler(pinMotorDisabler),
     pinRestPosition(pinMotorRestPosition),
     stepper(AccelStepper::DRIVER, pinMotorPull, pinMotorDirection),
-    reverse(false),
-    powerOff(true),
+    reverse(true),
+    powerOff(false),
     searching(false),
     isPulling(true),
     stepDelay(300),
     stepTimer(0),
+    motorSpeed(100),
     wheelRatio(2.0/1.0),
     stepsPerRev(400.0f*wheelRatio),
     stepsDone(0),
@@ -54,7 +55,10 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     digitalWrite(pinDirection, reverse);
     digitalWrite(pinPull, false);
 
-    Serial.println("motor const");
+    stepper.setAcceleration(1000);
+    stepper.setMaxSpeed(600);
+    stepper.setSpeed(200);
+    stepper.setCurrentPosition(0);
 }
 
 bool Motor::IsFree()
@@ -69,7 +73,7 @@ void Motor::FindRestPos()
     cutting = false;
     searching = true;
     
-    RotationsInTime(1,6000);
+    RotationsInTime(2,3);
 }
 
 void Motor::ComeBackInTime(double milisecs)
@@ -79,23 +83,30 @@ void Motor::ComeBackInTime(double milisecs)
     RotationsInTime(.85, milisecs);
 }
 
-bool Motor::RotationsInTime(float rotations, double milisecs)
+bool Motor::RotationsInTime(float rotations, double sec)
 {
-    // Serial.println("RotationsInTime");
     if(!IsFree()) return false;
     stepper.move(long(stepsPerRev*rotations));
+    motorSpeed = stepper.distanceToGo()/sec;
+    // Serial.print("RotationsInTime   ");
+    // Serial.println(stepper.speed());
+    digitalWrite(pinDisabler, false);
+
     // stepsToMake = unsigned((float)stepsPerRev*rotations);
     // stepDelay = EnsureCorrectDelay(double(milisecs*1000)/stepsToMake);
 
     return true;
 }
 
-bool Motor::RotationsWithSpeed(float rotations)
+bool Motor::RotationsWithSpeed(float rotations, float speed)
 {
-    Serial.println("RotationsWithSpeed");
-
     if(!IsFree()) return false;
+
+    // Serial.print("RotationsWithSpeed   ");
+    digitalWrite(pinDisabler, false);
+
     stepper.move(long(stepsPerRev*rotations));
+    SetSpeed(speed);
     useSpeed = true;
     return true;
 }
@@ -119,12 +130,27 @@ void Motor::CleanupAfterStep()
 
 void Motor::SetSpeed(double speed)
 {
-    stepper.setSpeed(float(wheelRatio*0.9341*speed));
+    // Serial.println(speed);
+    const auto speedtoSet = max(float(speed/0.3768)*2, 50); 
+    motorSpeed = speedtoSet;
 }
 
 void Motor::Update()
 {
-    stepper.run();
+
+    if(stepper.distanceToGo() !=0)
+    {
+        stepper.setSpeed(motorSpeed);
+        stepper.runSpeed();
+    }else{
+        if(cutting)
+        {
+            FindRestPos();
+            cutting = false;
+        }else{
+            digitalWrite(pinDisabler, true);
+        }
+    }
 
     if(searching)
     {

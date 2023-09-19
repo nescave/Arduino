@@ -17,7 +17,7 @@ Controller::Controller() :
     names{"Dlug wezy:","Srednica:", "speed fac:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
-    sps(0),
+    speed(0),
     enabled(true),
     numPieces(0)
 {
@@ -30,8 +30,9 @@ Controller::Controller() :
     input = new Input();
     motor = new Motor(11,12,13,1);
    
-    motor->SwitchDirection();
-    // motor->FindRestPos();
+    // motor->SwitchDirection();
+    motor->FindRestPos();
+    // motor->RotationsInTime(1,3);
 }
 
 Controller::~Controller()
@@ -46,11 +47,8 @@ void Controller::Update(unsigned dTime, int* encSteps)
     if(fastUpdateTimer >= fastUpdateDelay)
     {
         motor->Update();
-        fastUpdateTimer -= fastUpdateDelay;
-    }
-    constexpr double slowUpdateDelay = 50;
-    if(slowUpdateTimer>= slowUpdateDelay)
-    {
+
+        //slowUpdate
         if(input->WasBtnPressed(SELECT)) ToggleValues();
         if(input->WasBtnPressed(LEFT)) AdjustActiveValueBy(-1);
         if(input->WasBtnPressed(RIGHT)) AdjustActiveValueBy(1);
@@ -75,21 +73,24 @@ void Controller::Update(unsigned dTime, int* encSteps)
             distanceTraveled -= GetMaterialLen();
         }
         
-        ScreenDraw();
-        input->Update(slowUpdateDelay);
         // encoder->Update(slowUpdateDelay);
-        slowUpdateTimer-=slowUpdateDelay;
+        // slowUpdateTimer-=slowUpdateDelay;
+
+        //superslowupdate
+        // sps_test = speed = unsigned((float)pulsesCounter/superSlowUpdateDelay);
+        // Serial.println(pulsesCounter);
+
+        fastUpdateTimer -= fastUpdateDelay;
+
+        ScreenDraw();
+        input->Update(fastUpdateDelay/20);
     }
 
-    constexpr double superSlowUpdateDelay = 0.25;
+    constexpr double superSlowUpdateDelay = .25;
     if(superSlowUpdateTimer >= superSlowUpdateDelay)
     {
-        
-        sps_test = sps = unsigned((float)pulsesCounter/superSlowUpdateDelay);
-        sps = pulsesCounter*GetDistancePerStep()*4;
-        pulsesCounter = 0;
-        motor->spee
-        
+        speed = pulsesCounter*GetDistancePerStep()*4;
+        pulsesCounter = 0;   
         superSlowUpdateTimer -= superSlowUpdateDelay;
     }
     
@@ -128,8 +129,8 @@ void Controller::AdjustActiveValueBy(float val) const
 void Controller::AccTime(unsigned micros)
 {
     fastUpdateTimer += (double)micros;
-    slowUpdateTimer += (double)millis();
-    superSlowUpdateTimer += (double)millis()/1000;
+    // slowUpdateTimer += (double)micros/1000;
+    superSlowUpdateTimer += (double)micros/1000000;
 }
 
 float Controller::GetMaterialLen() const
@@ -162,7 +163,7 @@ void Controller::StartCutting()
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.5);
+    motor->RotationsWithSpeed(0.5, speed);
 }
 
 void Controller::ToggleEnable()

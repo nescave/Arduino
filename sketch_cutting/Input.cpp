@@ -37,7 +37,6 @@ bool Input::IsBtnHeld(Button btn) const
 {
     if(holdButton == btn)
     {
-        Serial.println(holdTime);
     }
     if(holdButton != NONE && holdButton == btn && holdTime > 750)
     {

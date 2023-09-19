@@ -32,7 +32,8 @@ public:
     float stepsPerRev;
     double stepDelay;
     double workingTime;
-    
+    double motorSpeed;
+
     unsigned stepsToMake;
     unsigned stepsDone;
     
@@ -43,8 +44,8 @@ public:
 
     void FindRestPos();
     void ComeBackInTime(double milisecs = 4000);
-    bool RotationsInTime(float rotations, double milisecs);
-    bool RotationsWithSpeed(float rotations);
+    bool RotationsInTime(float rotations, double sec);
+    bool RotationsWithSpeed(float rotations, float speed);
     double EnsureCorrectDelay(double delay) const;
     void CleanupAfterStep();
     void SetSpeed(double speed);

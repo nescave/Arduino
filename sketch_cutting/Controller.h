@@ -28,7 +28,7 @@ class Controller
     double fastUpdateTimer;
 
     unsigned pulsesCounter;
-    unsigned sps;
+    float speed;
     unsigned sps_test;
     bool enabled;
     int numPieces;
