@@ -45,7 +45,7 @@ void Controller::Update(unsigned dTime, int* encSteps)
     constexpr unsigned fastUpdateDelay = 500;
     if(fastUpdateTimer >= fastUpdateDelay)
     {
-        motor->Update(fastUpdateDelay, (double)sps* GetSpeedFactor());
+        motor->Update();
         fastUpdateTimer -= fastUpdateDelay;
     }
     constexpr double slowUpdateDelay = 50;
@@ -84,10 +84,12 @@ void Controller::Update(unsigned dTime, int* encSteps)
     constexpr double superSlowUpdateDelay = 0.25;
     if(superSlowUpdateTimer >= superSlowUpdateDelay)
     {
-
+        
         sps_test = sps = unsigned((float)pulsesCounter/superSlowUpdateDelay);
-        sps = 40;
+        sps = pulsesCounter*GetDistancePerStep()*4;
         pulsesCounter = 0;
+        motor->spee
+        
         superSlowUpdateTimer -= superSlowUpdateDelay;
     }
     
@@ -126,8 +128,8 @@ void Controller::AdjustActiveValueBy(float val) const
 void Controller::AccTime(unsigned micros)
 {
     fastUpdateTimer += (double)micros;
-    slowUpdateTimer += (double)micros/1000;
-    superSlowUpdateTimer += (double)micros/1000000;
+    slowUpdateTimer += (double)millis();
+    superSlowUpdateTimer += (double)millis()/1000;
 }
 
 float Controller::GetMaterialLen() const

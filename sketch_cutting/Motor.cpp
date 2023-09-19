@@ -30,6 +30,7 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     pinDirection(pinMotorDirection),
     pinDisabler(pinMotorDisabler),
     pinRestPosition(pinMotorRestPosition),
+    stepper(AccelStepper::DRIVER, pinMotorPull, pinMotorDirection),
     reverse(false),
     powerOff(true),
     searching(false),
@@ -37,7 +38,7 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     stepDelay(300),
     stepTimer(0),
     wheelRatio(2.0/1.0),
-    stepsPerRev(round(400*wheelRatio)),
+    stepsPerRev(400.0f*wheelRatio),
     stepsDone(0),
     stepsToMake(0),
     cutting(false),
@@ -58,17 +59,16 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
 
 bool Motor::IsFree()
 {
-    const auto ret = stepsDone >= stepsToMake;
+    const auto ret = stepper.distanceToGo()==0;
     powerOff = ret;
     return ret;
 }
 
 void Motor::FindRestPos()
 {
-    Serial.println("FindRestPos");
-
     cutting = false;
     searching = true;
+    
     RotationsInTime(1,6000);
 }
 
@@ -81,11 +81,11 @@ void Motor::ComeBackInTime(double milisecs)
 
 bool Motor::RotationsInTime(float rotations, double milisecs)
 {
-    Serial.println("RotationsInTime");
-    // Serial.print()
+    // Serial.println("RotationsInTime");
     if(!IsFree()) return false;
-    stepsToMake = unsigned((float)stepsPerRev*rotations);
-    stepDelay = EnsureCorrectDelay(double(milisecs*1000)/stepsToMake);
+    stepper.move(long(stepsPerRev*rotations));
+    // stepsToMake = unsigned((float)stepsPerRev*rotations);
+    // stepDelay = EnsureCorrectDelay(double(milisecs*1000)/stepsToMake);
 
     return true;
 }
@@ -95,7 +95,7 @@ bool Motor::RotationsWithSpeed(float rotations)
     Serial.println("RotationsWithSpeed");
 
     if(!IsFree()) return false;
-    stepsToMake = unsigned((float)stepsPerRev*rotations);
+    stepper.move(long(stepsPerRev*rotations));
     useSpeed = true;
     return true;
 }
@@ -117,38 +117,50 @@ void Motor::CleanupAfterStep()
     // searching = false;
 }
 
-void Motor::Update(unsigned dTime, double sps)
+void Motor::SetSpeed(double speed)
 {
-    localSps = max(sps, 1);
-    digitalWrite(pinDisabler, powerOff);
-    const double delay = GetDelay()/2;
-    for(;stepTimer >= delay; stepTimer -= (unsigned)delay){
-        if(IsFree())
-        {
-            continue;
-        }
-        
-        digitalWrite(pinDirection, reverse);
-        if(isPulling)
-        {
-            SetPullHigh();
-        }else
-        {
-            SetPullLow();
-        }
-        isPulling = !isPulling;
-    
-        if(stepsDone >= stepsToMake) //TODO: extract method
-        {
-            CleanupAfterStep();
-        }
-        if(searching)
-        {
-            if(digitalRead(pinRestPosition)){
-                stepsToMake = stepsDone = 0;
-                searching = false;
-            }
+    stepper.setSpeed(float(wheelRatio*0.9341*speed));
+}
+
+void Motor::Update()
+{
+    stepper.run();
+
+    if(searching)
+    {
+        if(digitalRead(pinRestPosition)){
+            stepper.setCurrentPosition(0);
+            stepper.stop();
+            searching = false;
         }
     }
-    stepTimer+=dTime;
+    
+    // localSps = max(sps, 1);
+    // digitalWrite(pinDisabler, powerOff);
+    // const double delay = GetDelay()/2;
+    // for(;stepTimer >= delay; stepTimer -= (unsigned)delay){
+    //     
+    //     digitalWrite(pinDirection, reverse);
+    //     if(isPulling)
+    //     {
+    //         SetPullHigh();
+    //     }else
+    //     {
+    //         SetPullLow();
+    //     }
+    //     isPulling = !isPulling;
+    //
+    //     if(stepsDone >= stepsToMake)
+    //     {
+    //         CleanupAfterStep();
+    //     }
+    //     if(searching)
+    //     {
+    //         if(digitalRead(pinRestPosition)){
+    //             stepsToMake = stepsDone = 0;
+    //             searching = false;
+    //         }
+    //     }
+    // }
+    // stepTimer+=dTime;
 }

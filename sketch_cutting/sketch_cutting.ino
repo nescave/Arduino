@@ -5,9 +5,25 @@
 #define  B_PHASE 3
 int encSteps = 0;  
 int encSteps2 = 0;
+
 Controller* controller;
 
 unsigned long lastTime;
+
+void interrupt()
+{
+    int i = digitalRead( B_PHASE);
+    if (i == 0)
+    {
+        encSteps -= 1;
+        encSteps2 -= 1;
+    }
+    else{
+        encSteps += 1;
+        encSteps2 += 1;
+    }
+}
+
 void setup()
 {
     pinMode(A_PHASE, INPUT_PULLUP);
@@ -44,18 +60,4 @@ void loop()
     // }
     // }
     lastTime = currTime;
-}
-
-void interrupt()
-{
-    int i = digitalRead( B_PHASE);
-    if (i == 0)
-    {
-        encSteps -= 1;
-        encSteps2 -= 1;
-    }
-    else{
-        encSteps += 1;
-        encSteps2 += 1;
-    }
 }

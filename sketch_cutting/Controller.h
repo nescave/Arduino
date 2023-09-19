@@ -27,7 +27,7 @@ class Controller
     double slowUpdateTimer;
     double fastUpdateTimer;
 
-    float pulsesCounter;
+    unsigned pulsesCounter;
     unsigned sps;
     unsigned sps_test;
     bool enabled;

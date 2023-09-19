@@ -1,11 +1,15 @@
 #pragma once
 
+#include "AccelStepper.h"
+
 class Motor
 {
     const int pinPull;
     const int pinDirection;
     const int pinDisabler;
     const int pinRestPosition;
+    
+    AccelStepper stepper;
 
     unsigned stepTimer;
     double localSps;
@@ -25,7 +29,7 @@ class Motor
 public:
     bool searching;
     Motor(int pinMotorPull, int pinMotorDirection, int pinMotorDisabler, int pinMotorRestPosition);
-    unsigned stepsPerRev;
+    float stepsPerRev;
     double stepDelay;
     double workingTime;
     
@@ -43,5 +47,6 @@ public:
     bool RotationsWithSpeed(float rotations);
     double EnsureCorrectDelay(double delay) const;
     void CleanupAfterStep();
-    void Update(unsigned dTime, double sps);    
+    void SetSpeed(double speed);
+    void Update();    
 };
