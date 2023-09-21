@@ -15,6 +15,7 @@ class Motor
     bool reverse;
     bool powerOff;
     float stepsPerRev;
+    float maxSpeed;
 
     void SetSpeedSteps(float speed);
     void SetSpeedLinear(float speed);

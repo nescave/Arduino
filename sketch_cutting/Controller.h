@@ -20,7 +20,7 @@ class Controller
     String names[2];
     float values[2];
 
-    double superSlowUpdateTimer;
+    double SlowUpdateTimer;
     double slowUpdateTimer;
     double fastUpdateTimer;
 

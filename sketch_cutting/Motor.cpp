@@ -12,7 +12,8 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     searching(false),
     wheelRatio(2.0/1.0),
     stepsPerRev(400.0f*wheelRatio),
-    cutting(false)
+    cutting(false),
+    maxSpeed(300)
 {
     pinMode(pinPull, OUTPUT);
     pinMode(pinDirection, OUTPUT);
@@ -22,9 +23,8 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
     digitalWrite(pinDirection, reverse);
     digitalWrite(pinPull, false);
 
-    stepper.setAcceleration(1000);
-    stepper.setMaxSpeed(600);
-    stepper.setSpeed(200);
+    stepper.setAcceleration(1600);
+    stepper.setMaxSpeed(maxSpeed);
     stepper.setCurrentPosition(0);
 }
 
@@ -45,7 +45,7 @@ void Motor::FindRestPos()
     searching = true;
     SetPower(true);
     
-    RotationsInTime(2,3);
+    RotationsInTime(2,5.5f);
 }
 
 bool Motor::RotationsInTime(float rotations, float sec)
@@ -54,8 +54,6 @@ bool Motor::RotationsInTime(float rotations, float sec)
     SetPower(true);
     stepper.move(long(stepsPerRev*rotations));
     SetSpeedSteps((float)stepper.distanceToGo()/sec);
-    // Serial.print("RotationsInTime   ");
-    // Serial.println(stepper.speed());
     digitalWrite(pinDisabler, false);
     return true;
 }
@@ -73,12 +71,12 @@ bool Motor::RotationsWithSpeed(float rotations, float speed)
 
 void Motor::SetSpeedSteps(float speed)
 {
-    stepper.setSpeed(speed);
+    stepper.setMaxSpeed(min(max(speed,50.0f), maxSpeed));
 }
 
 void Motor::SetSpeedLinear(float speed)
 {
-    stepper.setSpeed(max(float(speed/0.3768)*2, 50)); 
+    stepper.setMaxSpeed(min(max(float(speed/0.3768), 50.0f), maxSpeed)); 
 }
 
 void Motor::SetPower(bool powerOn)
@@ -90,7 +88,7 @@ void Motor::Update()
 {
     if(stepper.distanceToGo() !=0)
     {
-        stepper.runSpeed();
+        stepper.run();
     }else{
         if(cutting)
         {

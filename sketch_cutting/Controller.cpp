@@ -10,7 +10,7 @@ Controller::Controller() :
     valueSelector(0),
     fastUpdateTimer(0),
     slowUpdateTimer(0),
-    superSlowUpdateTimer(0),
+    SlowUpdateTimer(0),
     values{335, 89.67},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
@@ -39,44 +39,44 @@ Controller::~Controller()
 
 void Controller::Update(unsigned dTime, int* encSteps)
 {
-    constexpr unsigned fastUpdateDelay = 500;
+    motor->Update();
+
+    //pulses and distance
+    const auto pulses = *encSteps;
+    *encSteps = 0;        
+    pulsesCounter += pulses;
+    distanceTraveled +=  GetDistancePerStep() * (float)pulses;
+
+    //start cutting when distance reaches limit
+    if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
+    {
+        StartCutting();
+        distanceTraveled -= GetMaterialLen();
+    }
+
+    constexpr unsigned fastUpdateDelay = 200;
     if(fastUpdateTimer >= fastUpdateDelay)
     {
-        motor->Update();
-
-        //pulses and distance
-        const auto pulses = *encSteps;
-        *encSteps = 0;        
-        pulsesCounter += pulses;
-        distanceTraveled +=  GetDistancePerStep() * (float)pulses;
-
-        //start cutting when distance reaches limit
-        if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
-        {
-            StartCutting();
-            distanceTraveled -= GetMaterialLen();
-        }
-
         //Input
-        input->Update(fastUpdateDelay/20.0f);
+        input->Update(fastUpdateDelay*.5f);
         if(input->WasBtnPressed(SELECT)) ToggleValues();
         if(input->WasBtnPressed(LEFT)) AdjustActiveValueBy(-1);
         if(input->WasBtnPressed(RIGHT)) AdjustActiveValueBy(1);
         if(input->IsBtnHeld(LEFT)) AdjustActiveValueBy(-1);
         if(input->IsBtnHeld(RIGHT)) AdjustActiveValueBy(1);
-        if(input->WasBtnPressed(DOWN)) distanceTraveled = 0;
-        if(input->WasBtnPressed(UP)) distanceTraveled = 0;
+        if(input->WasBtnPressed(DOWN)) ResetPieces();
+        if(input->WasBtnPressed(UP)) ResetPieces();
 
         ScreenDraw();
         fastUpdateTimer -= fastUpdateDelay;
     }
 
-    constexpr float superSlowUpdateDelay = .25f;
-    if(superSlowUpdateTimer >= superSlowUpdateDelay)
+    constexpr float SlowUpdateDelay = .25f;
+    if(SlowUpdateTimer >= SlowUpdateDelay)
     {
-        speed = (float)pulsesCounter*GetDistancePerStep()*4;
+        speed = (float)pulsesCounter*GetDistancePerStep();
         pulsesCounter = 0;   
-        superSlowUpdateTimer -= superSlowUpdateDelay;
+        SlowUpdateTimer -= SlowUpdateDelay;
     }
     
     AccTime(dTime);
@@ -113,8 +113,8 @@ void Controller::AdjustActiveValueBy(float val) const
 
 void Controller::AccTime(unsigned micros)
 {
-    fastUpdateTimer += (double)micros;
-    superSlowUpdateTimer += (double)micros/1000000;
+    fastUpdateTimer += (double)micros/1000;
+    SlowUpdateTimer += (double)micros/1000000;
 }
 
 float Controller::GetMaterialLen() const
@@ -137,7 +137,7 @@ void Controller::StartCutting()
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.5, speed);
+    motor->RotationsWithSpeed(0.35, speed);
 }
 
 void Controller::ScreenDraw()
@@ -151,7 +151,7 @@ void Controller::ScreenDraw()
 
     //second row
     lcd.setCursor(0, 1);
-    lcd.print("droga:");
-    lcd.setCursor(7, 1);
-    lcd.print(distanceTraveled);
+    lcd.print("szt:");
+    lcd.setCursor(5, 1);
+    lcd.print(numPieces);
 }
