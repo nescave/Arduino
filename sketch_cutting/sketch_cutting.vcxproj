@@ -84,7 +84,6 @@
       <FileType>CppCode</FileType>
       <DeploymentContent>true</DeploymentContent>
     </ClCompile>
-    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Motor.cpp" />
     <ClCompile Include="sketch_cutting.ino" />
@@ -98,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="Encoder.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Motor.h" />
     <ClInclude Include="Utils.h" />

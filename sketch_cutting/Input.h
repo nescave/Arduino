@@ -20,7 +20,6 @@ private:
     Button GetButton();
     bool flipFlop;
 public:
-    // Button
     Input();
     void Update(double dTime);
 

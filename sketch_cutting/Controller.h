@@ -17,11 +17,8 @@ class Controller
     float* activeValue;
     float distanceTraveled;
     
-    String names[3];
-    float values[3];
-    // cuttingLength;
-    // diameter;
-    // speedFactor;
+    String names[2];
+    float values[2];
 
     double superSlowUpdateTimer;
     double slowUpdateTimer;
@@ -29,8 +26,6 @@ class Controller
 
     unsigned pulsesCounter;
     float speed;
-    unsigned sps_test;
-    bool enabled;
     int numPieces;
     
     float GetDistancePerStep() const;
@@ -40,11 +35,8 @@ class Controller
     void AccTime(unsigned micros);
     float GetMaterialLen() const;
     float GetDiameter() const;
-    float GetSpeedFactor() const;
-    unsigned GetSpm(unsigned pulses, unsigned milisecs) const;
     void ResetPieces();
     void StartCutting();
-    void ToggleEnable();
     void ScreenDraw();
 public:
     

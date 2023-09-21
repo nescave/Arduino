@@ -11,7 +11,6 @@ Input::Input() :
 
 void Input::Update(double dTime)
 {
-    // Serial.println(dTime);
     if(currentButton == lastButton)
     {
         holdButton = currentButton;
@@ -35,9 +34,6 @@ bool Input::WasBtnPressed(Button btn)
 
 bool Input::IsBtnHeld(Button btn) const
 {
-    if(holdButton == btn)
-    {
-    }
     if(holdButton != NONE && holdButton == btn && holdTime > 750)
     {
         return true;

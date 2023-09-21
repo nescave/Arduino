@@ -10,44 +10,28 @@ class Motor
     const int pinRestPosition;
     
     AccelStepper stepper;
-
-    unsigned stepTimer;
-    double localSps;
-    double wheelRatio;
-    
-    void SetPullHigh();
-    void SetPullLow();
-
-    double GetDelay();
-    double GetLowestDelay();
+    float wheelRatio;
     
     bool reverse;
     bool powerOff;
+    float stepsPerRev;
 
-    bool useSpeed;
-    bool isPulling;
+    void SetSpeedSteps(float speed);
+    void SetSpeedLinear(float speed);
+    void SetPower(bool powerOn);
 public:
     bool searching;
-    Motor(int pinMotorPull, int pinMotorDirection, int pinMotorDisabler, int pinMotorRestPosition);
-    float stepsPerRev;
-    double stepDelay;
-    double workingTime;
-    double motorSpeed;
-
-    unsigned stepsToMake;
-    unsigned stepsDone;
-    
     bool cutting;
+    
+    Motor(int pinMotorPull, int pinMotorDirection, int pinMotorDisabler, int pinMotorRestPosition);
+
     bool IsFree(); 
-    void SwitchDirection(){reverse = !reverse;}
-    void SetPower(bool isOff){powerOff = isOff;}
+
+    void SwitchDirection();
 
     void FindRestPos();
-    void ComeBackInTime(double milisecs = 4000);
-    bool RotationsInTime(float rotations, double sec);
+    bool RotationsInTime(float rotations, float sec);
     bool RotationsWithSpeed(float rotations, float speed);
-    double EnsureCorrectDelay(double delay) const;
-    void CleanupAfterStep();
-    void SetSpeed(double speed);
+
     void Update();    
 };
