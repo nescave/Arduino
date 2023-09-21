@@ -17,7 +17,8 @@ Controller::Controller() :
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
     pulsesCounter(0),
     speed(0),
-    numPieces(0)
+    numPieces(-1),
+    timeBtwCuts(0)
 {
     Serial.begin(9600);
     lcd.begin(16, 2);
@@ -44,20 +45,22 @@ void Controller::Update(unsigned dTime, int* encSteps)
     //pulses and distance
     const auto pulses = *encSteps;
     *encSteps = 0;        
-    pulsesCounter += pulses;
+    // pulsesCounter += pulses;
     distanceTraveled +=  GetDistancePerStep() * (float)pulses;
-
+    
+    timeBtwCuts+=double(dTime)/1000000;
     //start cutting when distance reaches limit
     if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
     {
-        StartCutting();
+        StartCutting(GetMaterialLen()/timeBtwCuts);
+        timeBtwCuts = 0;
         distanceTraveled -= GetMaterialLen();
     }
 
+    //Input
     constexpr unsigned fastUpdateDelay = 200;
     if(fastUpdateTimer >= fastUpdateDelay)
     {
-        //Input
         input->Update(fastUpdateDelay*.5f);
         if(input->WasBtnPressed(SELECT)) ToggleValues();
         if(input->WasBtnPressed(LEFT)) AdjustActiveValueBy(-1);
@@ -71,13 +74,13 @@ void Controller::Update(unsigned dTime, int* encSteps)
         fastUpdateTimer -= fastUpdateDelay;
     }
 
-    constexpr float SlowUpdateDelay = .25f;
-    if(SlowUpdateTimer >= SlowUpdateDelay)
-    {
-        speed = (float)pulsesCounter*GetDistancePerStep();
-        pulsesCounter = 0;   
-        SlowUpdateTimer -= SlowUpdateDelay;
-    }
+    // constexpr float SlowUpdateDelay = .25f;
+    // if(SlowUpdateTimer >= SlowUpdateDelay)
+    // {
+    //     speed = (float)pulsesCounter*GetDistancePerStep();
+    //     pulsesCounter = 0;   
+    //     SlowUpdateTimer -= SlowUpdateDelay;
+    // }
     
     AccTime(dTime);
 }
@@ -132,12 +135,12 @@ void Controller::ResetPieces()
     numPieces = 0;
 }
 
-void Controller::StartCutting()
+void Controller::StartCutting(float averageSpeed)
 {
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.35, speed);
+    motor->RotationsWithSpeed(0.5, averageSpeed);
 }
 
 void Controller::ScreenDraw()
@@ -153,5 +156,5 @@ void Controller::ScreenDraw()
     lcd.setCursor(0, 1);
     lcd.print("szt:");
     lcd.setCursor(5, 1);
-    lcd.print(numPieces);
+    lcd.print(max(numPieces,0));
 }

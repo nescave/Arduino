@@ -71,12 +71,14 @@ bool Motor::RotationsWithSpeed(float rotations, float speed)
 
 void Motor::SetSpeedSteps(float speed)
 {
-    stepper.setMaxSpeed(min(max(speed,50.0f), maxSpeed));
+    stepper.setMaxSpeed(min(max(speed,30.0f), maxSpeed));
+    // Serial.println(stepper.maxSpeed());
 }
 
 void Motor::SetSpeedLinear(float speed)
 {
-    stepper.setMaxSpeed(min(max(float(speed/0.3768), 50.0f), maxSpeed)); 
+    stepper.setMaxSpeed(min(max(speed/0.3768f, 30.0f), maxSpeed)); 
+    Serial.println(stepper.maxSpeed());
 }
 
 void Motor::SetPower(bool powerOn)

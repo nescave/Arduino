@@ -27,7 +27,8 @@ class Controller
     unsigned pulsesCounter;
     float speed;
     int numPieces;
-    
+    double timeBtwCuts;
+
     float GetDistancePerStep() const;
 
     void ToggleValues();
@@ -36,7 +37,7 @@ class Controller
     float GetMaterialLen() const;
     float GetDiameter() const;
     void ResetPieces();
-    void StartCutting();
+    void StartCutting(float averageSpeed);
     void ScreenDraw();
 public:
     
