@@ -4,7 +4,6 @@
 #define  A_PHASE 2
 #define  B_PHASE 3
 int encSteps = 0;  
-int encSteps2 = 0;
 
 Controller* controller;
 
@@ -16,11 +15,9 @@ void interrupt()
     if (i == 0)
     {
         encSteps -= 1;
-        encSteps2 -= 1;
     }
     else{
         encSteps += 1;
-        encSteps2 += 1;
     }
 }
 

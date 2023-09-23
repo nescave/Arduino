@@ -11,7 +11,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     SlowUpdateTimer(0),
-    values{335, 89.67},
+    values{335, 60.32},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -45,7 +45,6 @@ void Controller::Update(unsigned dTime, int* encSteps)
     //pulses and distance
     const auto pulses = *encSteps;
     *encSteps = 0;        
-    // pulsesCounter += pulses;
     distanceTraveled +=  GetDistancePerStep() * (float)pulses;
     
     timeBtwCuts+=double(dTime)/1000000;
@@ -74,14 +73,6 @@ void Controller::Update(unsigned dTime, int* encSteps)
         fastUpdateTimer -= fastUpdateDelay;
     }
 
-    // constexpr float SlowUpdateDelay = .25f;
-    // if(SlowUpdateTimer >= SlowUpdateDelay)
-    // {
-    //     speed = (float)pulsesCounter*GetDistancePerStep();
-    //     pulsesCounter = 0;   
-    //     SlowUpdateTimer -= SlowUpdateDelay;
-    // }
-    
     AccTime(dTime);
 }
 
@@ -157,4 +148,5 @@ void Controller::ScreenDraw()
     lcd.print("szt:");
     lcd.setCursor(5, 1);
     lcd.print(max(numPieces,0));
+
 }
