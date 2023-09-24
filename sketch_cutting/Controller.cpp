@@ -11,7 +11,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     SlowUpdateTimer(0),
-    values{335, 60.32},
+    values{335, 60},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -131,7 +131,7 @@ void Controller::StartCutting(float averageSpeed)
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.5, averageSpeed);
+    motor->RotationsWithSpeed(0.25f, averageSpeed);
 }
 
 void Controller::ScreenDraw()
@@ -148,5 +148,4 @@ void Controller::ScreenDraw()
     lcd.print("szt:");
     lcd.setCursor(5, 1);
     lcd.print(max(numPieces,0));
-
 }
