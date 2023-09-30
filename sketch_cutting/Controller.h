@@ -29,6 +29,8 @@ class Controller
     int numPieces;
     double timeBtwCuts;
 
+    int numPulses;
+
     float GetDistancePerStep() const;
 
     void ToggleValues();

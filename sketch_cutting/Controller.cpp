@@ -18,7 +18,8 @@ Controller::Controller() :
     pulsesCounter(0),
     speed(0),
     numPieces(-1),
-    timeBtwCuts(0)
+    timeBtwCuts(0),
+    numPulses(0)
 {
     Serial.begin(9600);
     lcd.begin(16, 2);
@@ -44,6 +45,7 @@ void Controller::Update(unsigned dTime, int* encSteps)
 
     //pulses and distance
     const auto pulses = *encSteps;
+    numPulses +=pulses;
     *encSteps = 0;        
     distanceTraveled +=  GetDistancePerStep() * (float)pulses;
     
@@ -145,7 +147,7 @@ void Controller::ScreenDraw()
 
     //second row
     lcd.setCursor(0, 1);
-    lcd.print("szt:");
-    lcd.setCursor(5, 1);
-    lcd.print(max(numPieces,0));
+    lcd.print("impulsy:");
+    lcd.setCursor(8, 1);
+    lcd.print(numPulses);
 }
