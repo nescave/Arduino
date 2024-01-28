@@ -31,7 +31,7 @@ class Controller
 
     int numPulses;
 
-    float GetDistancePerStep() const;
+    double GetDistancePerStep() const;
 
     void ToggleValues();
     void AdjustActiveValueBy(float val) const;
