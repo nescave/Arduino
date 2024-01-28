@@ -29,7 +29,7 @@ class Controller
     int numPieces;
     double timeBtwCuts;
 
-    float GetDistancePerStep() const;
+    double GetDistancePerStep() const;
 
     void ToggleValues();
     void AdjustActiveValueBy(float val) const;

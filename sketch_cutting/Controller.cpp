@@ -11,7 +11,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     SlowUpdateTimer(0),
-    values{335, 60},
+    values{335, 53.3f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -76,7 +76,7 @@ void Controller::Update(unsigned dTime, int* encSteps)
     AccTime(dTime);
 }
 
-float Controller::GetDistancePerStep() const
+double Controller::GetDistancePerStep() const
 {
     return float(GetDiameter() * 3.14159265 / 400.0);
 }
@@ -131,7 +131,7 @@ void Controller::StartCutting(float averageSpeed)
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.25f, averageSpeed);
+    motor->RotationsWithSpeed(0.25f, averageSpeed*1.1f);
 }
 
 void Controller::ScreenDraw()
