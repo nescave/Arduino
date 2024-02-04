@@ -9,17 +9,14 @@ Controller::Controller() :
     activeValue(nullptr),
     valueSelector(0),
     fastUpdateTimer(0),
-    slowUpdateTimer(0),
-    SlowUpdateTimer(0),
     values{335, 67.5f},
-    distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
-    pulsesCounter(0),
     speed(0),
     numPieces(-1),
+    numAllPieces(-1),
     timeBtwCuts(0),
-    numPulses(0)
+    shouldCut(false)
 {
     Serial.begin(9600);
     lcd.begin(16, 2);
@@ -43,19 +40,13 @@ void Controller::Update(unsigned dTime, int* encSteps)
 {
     motor->Update();
 
-    //pulses and distance
-    const auto pulses = *encSteps;
-    numPulses +=pulses;
-    *encSteps = 0;        
-    distanceTraveled +=  GetDistancePerStep() * (float)pulses;
-    
     timeBtwCuts+=double(dTime)/1000000;
     //start cutting when distance reaches limit
-    if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
+    if(shouldCut && motor->IsFree())
     {
+        shouldCut = false;
         StartCutting(GetMaterialLen()/timeBtwCuts);
         timeBtwCuts = 0;
-        distanceTraveled -= GetMaterialLen();
     }
 
     //Input
@@ -76,11 +67,6 @@ void Controller::Update(unsigned dTime, int* encSteps)
     }
 
     AccTime(dTime);
-}
-
-double Controller::GetDistancePerStep() const
-{
-    return double(GetDiameter() * PI / 400.0);
 }
 
 void Controller::ToggleValues()
@@ -110,17 +96,11 @@ void Controller::AdjustActiveValueBy(float val) const
 void Controller::AccTime(unsigned micros)
 {
     fastUpdateTimer += (double)micros/1000;
-    SlowUpdateTimer += (double)micros/1000000;
 }
 
 float Controller::GetMaterialLen() const
 {
     return values[0];
-}
-
-float Controller::GetDiameter() const
-{
-    return values[1];
 }
 
 void Controller::ResetPieces()
@@ -133,6 +113,7 @@ void Controller::StartCutting(float averageSpeed)
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
+    numAllPieces++;
     motor->RotationsWithSpeed(0.25f, averageSpeed*1.1f);
 }
 
@@ -141,13 +122,13 @@ void Controller::ScreenDraw()
     lcd.clear();
     //first row
     lcd.setCursor(0, 0);
-    lcd.print(*activeName);
-    lcd.setCursor(11, 0);
-    lcd.print(*activeValue);
+    lcd.print("szt:");
+    lcd.setCursor(10, 0);
+    lcd.print(numAllPieces);
 
     //second row
     lcd.setCursor(0, 1);
-    lcd.print("impulsy:");
-    lcd.setCursor(8, 1);
+    lcd.print("teraz:");
+    lcd.setCursor(10, 1);
     lcd.print(numPulses);
 }

@@ -9,39 +9,31 @@ class Controller
 {
     // Encoder* encoder;
     Input* input;
-    Motor* motor;
     LiquidCrystal lcd;
 
     short valueSelector; 
     String* activeName;
     float* activeValue;
-    float distanceTraveled;
     
     String names[2];
     float values[2];
 
-    double SlowUpdateTimer;
-    double slowUpdateTimer;
     double fastUpdateTimer;
 
-    unsigned pulsesCounter;
     float speed;
     int numPieces;
+    int numAllPieces;
     double timeBtwCuts;
-
-    int numPulses;
-
-    double GetDistancePerStep() const;
 
     void ToggleValues();
     void AdjustActiveValueBy(float val) const;
     void AccTime(unsigned micros);
-    float GetMaterialLen() const;
-    float GetDiameter() const;
     void ResetPieces();
     void StartCutting(float averageSpeed);
     void ScreenDraw();
 public:
+    Motor* motor;
+    bool shouldCut;
     
     Controller();
     ~Controller();

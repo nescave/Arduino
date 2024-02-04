@@ -6,31 +6,22 @@
 int encSteps = 0;  
 
 Controller* controller;
-
 unsigned long lastTime;
 
 void interrupt()
 {
-    int i = digitalRead( B_PHASE);
-    if (i == 0)
-    {
-        encSteps -= 1;
-    }
-    else{
-        encSteps += 1;
-    }
+    if(controller->motor->IsFree())
+        controller->shouldCut = true;
 }
 
 void setup()
 {
     pinMode(A_PHASE, INPUT_PULLUP);
-    pinMode(B_PHASE, INPUT_PULLUP);
 
     digitalWrite(A_PHASE, HIGH);
-    digitalWrite(B_PHASE, HIGH);
 
     Serial.begin(9600);
-    attachInterrupt(digitalPinToInterrupt(A_PHASE), interrupt, FALLING);
+    attachInterrupt(digitalPinToInterrupt(A_PHASE), interrupt, RISING);
     
     controller = new Controller();
     lastTime = micros();
