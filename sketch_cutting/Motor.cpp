@@ -78,7 +78,7 @@ void Motor::SetSpeedSteps(float speed)
 void Motor::SetSpeedLinear(float speed)
 {
     stepper.setMaxSpeed(min(max(speed/0.3768f, 30.0f), maxSpeed)); 
-    Serial.println(stepper.maxSpeed());
+    // Serial.println(stepper.maxSpeed());
 }
 
 void Motor::SetPower(bool powerOn)
@@ -91,6 +91,12 @@ void Motor::Update()
     if(stepper.distanceToGo() !=0)
     {
         stepper.run();
+        if(cutting)
+        {
+            Serial.println("tnie");
+        }else{
+            Serial.println("wraca");
+        }
     }else{
         if(cutting)
         {
