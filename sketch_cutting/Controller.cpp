@@ -114,7 +114,7 @@ void Controller::StartCutting(float averageSpeed)
     motor->searching = false;
     numPieces++;
     numAllPieces++;
-    motor->RotationsWithSpeed(0.25f, averageSpeed*1.1f);
+    motor->RotationsWithSpeed(0.25f, averageSpeed*1.5f);
 }
 
 void Controller::ScreenDraw()
