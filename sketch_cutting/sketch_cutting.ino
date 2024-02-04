@@ -7,11 +7,16 @@ int encSteps = 0;
 
 Controller* controller;
 unsigned long lastTime;
+bool cutSignal;
 
 void interrupt()
 {
-    if(controller->IsFree())
-        controller->shouldCut = true;
+
+    if(!controller->IsCutting() && controller->shouldCut == false)
+    {
+        cutSignal = true;
+        Serial.println("ping!");
+    }
 }
 
 void setup()
@@ -21,7 +26,7 @@ void setup()
     digitalWrite(A_PHASE, HIGH);
 
     Serial.begin(9600);
-    attachInterrupt(digitalPinToInterrupt(A_PHASE), interrupt, RISING);
+    // attachInterrupt(digitalPinToInterrupt(A_PHASE), interrupt, RISING);
     
     controller = new Controller();
     lastTime = micros();
@@ -32,9 +37,19 @@ void loop()
 {
     const unsigned long currTime = micros();
     dTime += currTime - lastTime; 
-    
+
+    if(!digitalRead(A_PHASE))    
+        cutSignal = true;
+
     if(dTime>200)
     {
+        if(!controller->IsCutting() && cutSignal)
+        {
+            // Serial.println(controller->IsCutting());
+            controller->shouldCut = cutSignal;
+
+            cutSignal = false;
+        }
         controller->Update(dTime, &encSteps);
         dTime=0;
     }

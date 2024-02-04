@@ -39,7 +39,7 @@ public:
     Controller();
     ~Controller();
 
-    bool IsFree();
+    bool IsCutting();
 
     void Update(unsigned dTime, int* encSteps);
 };

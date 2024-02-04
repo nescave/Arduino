@@ -36,9 +36,9 @@ Controller::~Controller()
     delete motor;
 }
 
-bool Controller::IsFree()
+bool Controller::IsCutting()
 {
-    return motor->IsFree();
+    return motor->cutting;
 }
 
 void Controller::Update(unsigned dTime, int* encSteps)
@@ -49,8 +49,9 @@ void Controller::Update(unsigned dTime, int* encSteps)
     //start cutting when distance reaches limit
     if(shouldCut && motor->IsFree())
     {
+
         shouldCut = false;
-        StartCutting(GetMaterialLen()/timeBtwCuts);
+        StartCutting(GetMaterialLen()/15.f);//temp / TODO
         timeBtwCuts = 0;
     }
 

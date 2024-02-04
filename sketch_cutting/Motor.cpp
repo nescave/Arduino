@@ -30,7 +30,9 @@ Motor::Motor(const int pinMotorPull, const int pinMotorDirection, const int pinM
 
 bool Motor::IsFree()
 {
-    return stepper.distanceToGo()==0;
+    Serial.println(searching);
+
+    return stepper.distanceToGo()==0 && !searching && !cutting;
 }
 
 void Motor::SwitchDirection()
@@ -44,6 +46,7 @@ void Motor::FindRestPos()
     cutting = false;
     searching = true;
     SetPower(true);
+    Serial.println("wraca");
     
     RotationsInTime(2,5.5f);
 }
@@ -65,6 +68,7 @@ bool Motor::RotationsWithSpeed(float rotations, float speed)
 
     stepper.move(long(stepsPerRev*rotations));
     SetSpeedLinear(speed);
+    Serial.println("tnie");
     
     return true;
 }
@@ -88,15 +92,19 @@ void Motor::SetPower(bool powerOn)
 
 void Motor::Update()
 {
+    // Serial.println(digitalRead(pinDirection));
+    // Serial.println(digitalRead(pinDisabler));
+    // Serial.println(digitalRead(pinPull));
+
     if(stepper.distanceToGo() !=0)
     {
         stepper.run();
-        if(cutting)
-        {
-            Serial.println("tnie");
-        }else{
-            Serial.println("wraca");
-        }
+        // if(cutting)
+        // {
+        //     Serial.println("tnie");
+        // }else{
+        //     Serial.println("wraca");
+        // }
     }else{
         if(cutting)
         {
@@ -114,5 +122,9 @@ void Motor::Update()
             stepper.stop();
             searching = false;
         }
+    }
+    else
+    {
+        searching = false;
     }
 }
