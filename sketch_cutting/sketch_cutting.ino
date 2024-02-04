@@ -10,7 +10,7 @@ unsigned long lastTime;
 
 void interrupt()
 {
-    if(controller->motor->IsFree())
+    if(controller->IsFree())
         controller->shouldCut = true;
 }
 

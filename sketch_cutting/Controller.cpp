@@ -36,6 +36,11 @@ Controller::~Controller()
     delete motor;
 }
 
+bool Controller::IsFree()
+{
+    return motor->IsFree();
+}
+
 void Controller::Update(unsigned dTime, int* encSteps)
 {
     motor->Update();

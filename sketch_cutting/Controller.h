@@ -9,6 +9,7 @@ class Controller
 {
     // Encoder* encoder;
     Input* input;
+    Motor* motor;
     LiquidCrystal lcd;
 
     short valueSelector; 
@@ -32,11 +33,12 @@ class Controller
     void StartCutting(float averageSpeed);
     void ScreenDraw();
 public:
-    Motor* motor;
     bool shouldCut;
     
     Controller();
     ~Controller();
+
+    bool IsFree();
 
     void Update(unsigned dTime, int* encSteps);
 };
