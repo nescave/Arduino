@@ -135,5 +135,5 @@ void Controller::ScreenDraw()
     lcd.setCursor(0, 1);
     lcd.print("teraz:");
     lcd.setCursor(10, 1);
-    lcd.print(numPulses);
+    lcd.print(numPieces);
 }

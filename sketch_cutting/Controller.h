@@ -28,6 +28,7 @@ class Controller
 
     void ToggleValues();
     void AdjustActiveValueBy(float val) const;
+    float GetMaterialLen() const;
     void AccTime(unsigned micros);
     void ResetPieces();
     void StartCutting(float averageSpeed);
