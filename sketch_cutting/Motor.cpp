@@ -78,7 +78,7 @@ void Motor::SetSpeedSteps(float speed)
 void Motor::SetSpeedLinear(float speed)
 {
     stepper.setMaxSpeed(min(max(speed/0.3768f, 30.0f), maxSpeed)); 
-    Serial.println(stepper.maxSpeed());
+    // Serial.println(stepper.maxSpeed());
 }
 
 void Motor::SetPower(bool powerOn)

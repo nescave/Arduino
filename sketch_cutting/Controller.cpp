@@ -11,7 +11,7 @@ Controller::Controller() :
     fastUpdateTimer(0),
     slowUpdateTimer(0),
     SlowUpdateTimer(0),
-    values{335, 53.3f},
+    values{335, 67.5f},
     distanceTraveled(0),
     names{"Dlug wezy:","Srednica:"},
     lcd(LiquidCrystal(8, 9, 4, 5, 6, 7)),
@@ -46,7 +46,8 @@ void Controller::Update(unsigned dTime, int* encSteps)
     const auto pulses = *encSteps;
     *encSteps = 0;        
     distanceTraveled +=  GetDistancePerStep() * (float)pulses;
-    
+    Serial.println(distanceTraveled);
+
     timeBtwCuts+=double(dTime)/1000000;
     //start cutting when distance reaches limit
     if(distanceTraveled >= GetMaterialLen() && motor->IsFree())
@@ -131,7 +132,7 @@ void Controller::StartCutting(float averageSpeed)
     motor->cutting = true;
     motor->searching = false;
     numPieces++;
-    motor->RotationsWithSpeed(0.25f, averageSpeed*1.1f);
+    motor->RotationsWithSpeed(0.25f, averageSpeed*1.5f);
 }
 
 void Controller::ScreenDraw()
